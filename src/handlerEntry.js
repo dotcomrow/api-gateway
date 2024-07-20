@@ -88,7 +88,7 @@ export async function handleRequest(request, env, context) {
     );
   }
 
-  var req_url = new URL(request.url)
+  var req_url = new URL(request.url);
   if (!env[req_url.pathname.split("/")[1]]) {
     throw new Error(req_url.pathname.split("/")[1] + " not bound service");
   }
@@ -105,10 +105,11 @@ export async function handleRequest(request, env, context) {
         severity: "INFO",
         // textPayload: message,
         jsonPayload: {
-            url: request.url,
-            method: request.method,
-            body: request.body,
-            headers: request.headers
+          url: request.url,
+          method: request.method,
+          body: request.body,
+          headers: request.headers,
+        },
       },
     ]
   );
@@ -119,5 +120,5 @@ export async function handleRequest(request, env, context) {
       body: request.body,
       headers: request.headers,
     })
-  )
+  );
 }
