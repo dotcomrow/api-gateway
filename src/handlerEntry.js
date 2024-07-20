@@ -101,31 +101,42 @@ export async function handleRequest(request, env, context) {
     );
   }
 
-  const { search, itemId } = new URL(request.url)
-  var query = QueryStringToJSON(search);
+  var req_url = new URL(request.url)
+  
+  var itemId = req_url.pathname.split("/")[2];
 
-  var responseObject = {};
-  switch (request.method) {
-    case "GET":
-      responseObject = await handleGet(env, accountResponse["id"], query, itemId);
-      break;
-    case "PUT":
-      var bodyObj = await request.json();
-      responseObject = await handlePut(env, accountResponse["id"], bodyObj);
-      break;
-    case "POST":
-      var bodyObj = await request.json();
-      responseObject = await handlePost(env, accountResponse["id"], bodyObj);
-      break;
-    case "DELETE":
-      responseObject = await handleDelete(env, accountResponse["id"], query, itemId);
-      break;
-  }
 
-  return new Response(JSON.stringify(responseObject), {
-    status: 200,
-    headers: responseHeaders,
-  });
+  return env[req_url.pathname.split("/")[1]].fetch(
+    new Request(request.url, {
+      method: request.method,
+      body: request.body,
+      headers: request.headers,
+    })
+  )
+
+
+  // var responseObject = {};
+  // switch (request.method) {
+  //   case "GET":
+  //     responseObject = await handleGet(env, accountResponse["id"], query, itemId);
+  //     break;
+  //   case "PUT":
+  //     var bodyObj = await request.json();
+  //     responseObject = await handlePut(env, accountResponse["id"], bodyObj);
+  //     break;
+  //   case "POST":
+  //     var bodyObj = await request.json();
+  //     responseObject = await handlePost(env, accountResponse["id"], bodyObj);
+  //     break;
+  //   case "DELETE":
+  //     responseObject = await handleDelete(env, accountResponse["id"], query, itemId);
+  //     break;
+  // }
+
+  // return new Response(JSON.stringify(responseObject), {
+  //   status: 200,
+  //   headers: responseHeaders,
+  // });
 }
 
 function QueryStringToJSON(query) {
