@@ -136,9 +136,14 @@ export async function handleRequest(request, env, context) {
     })
   );
 
-  response.headers.append("Access-Control-Allow-Credentials", "true");
-  response.headers.append("Access-Control-Allow-Origin", origin);
-  response.headers.append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
-  response.headers.append("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  var response_headers = {};
+  for (var entry of response.headers.entries()) {
+    response_headers[entry[0]] = entry[1];
+  }
+  response_headers["Access-Control-Allow-Credentials"] = "true";
+  response_headers["Access-Control-Allow-Origin"] = origin;
+  response_headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE, PUT";
+  response_headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Identity";
+  response_headers.headers = response_headers;
   return response;
 }
