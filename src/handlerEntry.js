@@ -97,12 +97,12 @@ export async function handleRequest(request, env, context) {
   for (var entry of request.headers.entries()) {
     request_headers[entry[0]] = entry[1];
   }
-  request_headers.set("X-Auth-User", accountResponse["id"]);
-  request_headers.set("X-Auth-Email", accountResponse["email"]);
-  request_headers.set("X-Auth-Name", accountResponse["name"]);
-  request_headers.set("X-Auth-Profile", accountResponse["picture"]);
-  request_headers.set("X-Auth-Provider", "google");
-  request_headers.set("X-Auth-Groups", accountResponse["groups"]);
+  request_headers["X-Auth-User"]= accountResponse["id"];
+  request_headers["X-Auth-Email"]= accountResponse["email"];
+  request_headers["X-Auth-Name"]= accountResponse["name"];
+  request_headers["X-Auth-Profile"]= accountResponse["picture"];
+  request_headers["X-Auth-Provider"]= "google";
+  request_headers["X-Auth-Groups"]= accountResponse["groups"];
 
   return env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
