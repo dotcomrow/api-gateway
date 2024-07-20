@@ -77,4 +77,9 @@ resource "cloudflare_worker_script" "project_script" {
     name = "nodejs-cloudflare-service-template"
     service ="nodejs-cloudflare-service-template"
   }
+
+  service_binding {
+    name = "nodejs-cloudflare-results-service"
+    service ="nodejs-cloudflare-results-service"
+  }
 }
