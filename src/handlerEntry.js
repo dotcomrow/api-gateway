@@ -120,7 +120,7 @@ export async function handleRequest(request, env, context) {
         description: obj.description
       });
     }
-    request_headers["X-Auth-Groups"]= groups_return;
+    request_headers["X-Auth-Groups"]= JSON.stringify(groups_return);
   }
 
   var req_url = new URL(request.url);
