@@ -1,0 +1,31 @@
+name = "preferences-service"
+type = "webpack"
+
+workers_dev = false
+webpack_config = "webpack.config.js"
+compatibility_date = "2024-02-14"
+node_compat = true
+
+[build]
+command = "npm install && npm run build"
+
+[build.upload]
+format = "modules"
+main = "index.mjs"
+
+[dev]
+ip = "0.0.0.0"
+port = 8787
+local_protocol="http"
+upstream_protocol="https"
+
+[[d1_databases]]
+binding = "user_prefs_database"
+database_name = "database"
+database_id = "212a9e7d-acad-4682-8034-132b2cc10c5a"
+
+[vars]
+CORS_DOMAINS = ".*.suncoast.systems,.*localhost.*"
+
+USER_PROFILE_SVC_URL="https://ol-svc-hw4tpcvc4q-ue.a.run.app/ol-svc"
+
