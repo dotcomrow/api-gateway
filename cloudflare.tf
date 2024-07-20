@@ -72,4 +72,9 @@ resource "cloudflare_worker_script" "project_script" {
     name = "nodejs-cloudflare-logging-service"
     service ="nodejs-cloudflare-logging-service"
   }
+
+  service_binding {
+    name = "nodejs-cloudflare-service-template"
+    service ="nodejs-cloudflare-service-template"
+  }
 }
