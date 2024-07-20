@@ -145,6 +145,11 @@ export async function handleRequest(request, env, context) {
   response_headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE, PUT";
   response_headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type, Identity";
   response_headers["Content-Type"] = "application/json";
-  response_headers.headers = response_headers;
-  return response;
+
+  var resp = new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: response_headers,
+  });
+  return resp;
 }
