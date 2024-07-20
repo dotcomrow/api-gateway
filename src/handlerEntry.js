@@ -1,5 +1,5 @@
-import { GCPLogger } from "npm-gcp-logging";
 import { GCPAccessToken } from "npm-gcp-token";
+import { GCPUserInfo } from "npm-gcp-userinfo";
 
 export async function handleRequest(request, env, context) {
   var origin = request.headers.get("Origin") || request.headers.get("origin");
@@ -88,11 +88,6 @@ export async function handleRequest(request, env, context) {
     );
   }
 
-  var req_url = new URL(request.url);
-  if (!env[req_url.pathname.split("/")[1]]) {
-    throw new Error(req_url.pathname.split("/")[1] + " not bound service");
-  }
-
   var request_headers = {};
   for (var entry of request.headers.entries()) {
     request_headers[entry[0]] = entry[1];
@@ -102,7 +97,36 @@ export async function handleRequest(request, env, context) {
   request_headers["X-Auth-Name"]= accountResponse["name"];
   request_headers["X-Auth-Profile"]= accountResponse["picture"];
   request_headers["X-Auth-Provider"]= "google";
-  request_headers["X-Auth-Groups"]= accountResponse["groups"];
+
+  var userinfo_token = new GCPAccessToken(
+    env.GCP_USERINFO_CREDENTIALS
+  ).getAccessToken(
+    "https://www.googleapis.com/auth/admin.directory.group.readonly"
+  );
+  var userinfo_response = await GCPUserInfo.getUserInfo(
+    (
+      await userinfo_token
+    ).access_token,
+    account_id,
+    env.DOMAIN
+  );
+
+  if (userinfo_response) {
+    // filter group data from response
+    var groups_return = [];
+    for (var obj of userinfo_response.groups) {
+      groups_return.push({
+        email: obj.email,
+        description: obj.description
+      });
+    }
+    request_headers["X-Auth-Groups"]= groups_return;
+  }
+
+  var req_url = new URL(request.url);
+  if (!env[req_url.pathname.split("/")[1]]) {
+    throw new Error(req_url.pathname.split("/")[1] + " not bound service");
+  }
 
   return env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
