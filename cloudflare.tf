@@ -67,4 +67,9 @@ resource "cloudflare_worker_script" "project_script" {
     name = "GLOBAL_SHARED_SECRET"
     text = var.GLOBAL_SHARED_SECRET
   }
+
+  service_binding {
+    name = "nodejs-cloudflare-logging-service"
+    service ="nodejs-cloudflare-logging-service"
+  }
 }
