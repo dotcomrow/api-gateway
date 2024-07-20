@@ -144,7 +144,6 @@ export async function handleRequest(request, env, context) {
   response_headers["Access-Control-Allow-Origin"] = origin;
   response_headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE, PUT";
   response_headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type";
-  delete response_headers["Content-Type"];
   response_headers["Content-Type"] = "application/json";
   response_headers["Connection"] = request.headers.get("Connection");
 
