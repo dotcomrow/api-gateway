@@ -137,10 +137,6 @@ export async function handleRequest(request, env, context) {
   );
 
   var response_headers = {};
-  for (var entry of response.headers.entries()) {
-    if (entry[0] != "Content-Type")
-      response_headers[entry[0]] = entry[1];
-  }
   response_headers["Access-Control-Allow-Credentials"] = "true";
   response_headers["Access-Control-Allow-Origin"] = origin;
   response_headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE, PUT";
@@ -148,10 +144,9 @@ export async function handleRequest(request, env, context) {
   response_headers["Content-Type"] = "application/json";
   response_headers["Connection"] = request.headers.get("Connection");
 
-  var resp = new Response(response.body, {
+  return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
     headers: response_headers,
   });
-  return resp;
 }
