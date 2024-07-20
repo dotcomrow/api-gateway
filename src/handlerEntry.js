@@ -93,27 +93,6 @@ export async function handleRequest(request, env, context) {
     throw new Error(req_url.pathname.split("/")[1] + " not bound service");
   }
 
-  var logging_token = await new GCPAccessToken(
-    env.GCP_LOGGING_CREDENTIALS
-  ).getAccessToken("https://www.googleapis.com/auth/logging.write");
-  await GCPLogger.logEntry(
-    env.GCP_LOGGING_PROJECT_ID,
-    logging_token.access_token,
-    env.LOG_NAME,
-    [
-      {
-        severity: "INFO",
-        // textPayload: message,
-        jsonPayload: {
-          url: request.url,
-          method: request.method,
-          body: request.body,
-          headers: request.headers,
-        },
-      },
-    ]
-  );
-
   return env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
       method: request.method,
