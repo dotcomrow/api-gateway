@@ -93,7 +93,10 @@ export async function handleRequest(request, env, context) {
     throw new Error(req_url.pathname.split("/")[1] + " not bound service");
   }
 
-  var request_headers = request.headers;
+  var request_headers = {};
+  for (var entry of request.headers.entries()) {
+    request_headers[entry[0]] = entry[1];
+  }
   request_headers.set("X-Auth-User", accountResponse["id"]);
   request_headers.set("X-Auth-Email", accountResponse["email"]);
   request_headers.set("X-Auth-Name", accountResponse["name"]);
