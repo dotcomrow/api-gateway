@@ -1,9 +1,5 @@
-import {
-  handleGet,
-  handlePost,
-  handlePut,
-  handleDelete,
-} from "./requestHandlers.js";
+import { GCPLogger } from "npm-gcp-logging";
+import { GCPAccessToken } from "npm-gcp-token";
 
 export async function handleRequest(request, env, context) {
   var origin = request.headers.get("Origin") || request.headers.get("origin");
@@ -68,15 +64,6 @@ export async function handleRequest(request, env, context) {
     );
   }
 
-  var responseHeaders = {
-    "Access-Control-Allow-Credentials": "true",
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Methods": "POST, GET, OPTIONS, DELETE, PUT",
-    "Access-Control-Allow-Headers": "Authorization, Content-Type, Identity",
-    Connection: request.headers.get("Connection"),
-    "Content-Type": "application/json",
-  };
-
   const googleProfileUrl =
     "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
     authHeader;
@@ -102,13 +89,30 @@ export async function handleRequest(request, env, context) {
   }
 
   var req_url = new URL(request.url)
-  
-  var itemId = req_url.pathname.split("/")[2];
-
-
   if (!env[req_url.pathname.split("/")[1]]) {
     throw new Error(req_url.pathname.split("/")[1] + " not bound service");
   }
+
+  var logging_token = await new GCPAccessToken(
+    env.GCP_LOGGING_CREDENTIALS
+  ).getAccessToken("https://www.googleapis.com/auth/logging.write");
+  await GCPLogger.logEntry(
+    env.GCP_LOGGING_PROJECT_ID,
+    logging_token.access_token,
+    env.LOG_NAME,
+    [
+      {
+        severity: "INFO",
+        // textPayload: message,
+        jsonPayload: {
+            url: request.url,
+            method: request.method,
+            body: request.body,
+            headers: request.headers
+      },
+    ]
+  );
+
   return env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
       method: request.method,
@@ -116,40 +120,4 @@ export async function handleRequest(request, env, context) {
       headers: request.headers,
     })
   )
-
-
-  // var responseObject = {};
-  // switch (request.method) {
-  //   case "GET":
-  //     responseObject = await handleGet(env, accountResponse["id"], query, itemId);
-  //     break;
-  //   case "PUT":
-  //     var bodyObj = await request.json();
-  //     responseObject = await handlePut(env, accountResponse["id"], bodyObj);
-  //     break;
-  //   case "POST":
-  //     var bodyObj = await request.json();
-  //     responseObject = await handlePost(env, accountResponse["id"], bodyObj);
-  //     break;
-  //   case "DELETE":
-  //     responseObject = await handleDelete(env, accountResponse["id"], query, itemId);
-  //     break;
-  // }
-
-  // return new Response(JSON.stringify(responseObject), {
-  //   status: 200,
-  //   headers: responseHeaders,
-  // });
-}
-
-function QueryStringToJSON(query) {
-  var pairs = query.slice(1).split("&");
-
-  var result = {};
-  pairs.forEach(function (pair) {
-    pair = pair.split("=");
-    result[pair[0]] = decodeURIComponent(pair[1] || "");
-  });
-
-  return JSON.parse(JSON.stringify(result));
 }
