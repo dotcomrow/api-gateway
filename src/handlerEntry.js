@@ -106,6 +106,9 @@ export async function handleRequest(request, env, context) {
   var itemId = req_url.pathname.split("/")[2];
 
 
+  if (!env[req_url.pathname.split("/")[1]]) {
+    throw new Error(req_url.pathname.split("/")[1] + " not bound service");
+  }
   return env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
       method: request.method,
