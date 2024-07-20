@@ -107,7 +107,7 @@ export async function handleRequest(request, env, context) {
     (
       await userinfo_token
     ).access_token,
-    account_id,
+    accountResponse["id"],
     env.DOMAIN
   );
 
