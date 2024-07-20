@@ -128,11 +128,17 @@ export async function handleRequest(request, env, context) {
     throw new Error(req_url.pathname.split("/")[1] + " not bound service");
   }
 
-  return env[req_url.pathname.split("/")[1]].fetch(
+  var response = await env[req_url.pathname.split("/")[1]].fetch(
     new Request(request.url, {
       method: request.method,
       body: request.body,
       headers: request_headers,
     })
   );
+
+  response.headers.append("Access-Control-Allow-Credentials", "true");
+  response.headers.append("Access-Control-Allow-Origin", origin);
+  response.headers.append("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT");
+  response.headers.append("Access-Control-Allow-Headers", "Authorization, Content-Type");
+  return response;
 }
