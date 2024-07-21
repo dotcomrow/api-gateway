@@ -1,10 +1,8 @@
-import { drizzle } from "drizzle-orm/d1";
 import { GCPLogger } from "npm-gcp-logging";
 import { GCPAccessToken } from "npm-gcp-token";
 import { serializeError } from "serialize-error";
 
 export async function init_script(env) {
-  const db = drizzle(env.cache);
   try {
     await env.cache
       .prepare(
