@@ -102,6 +102,7 @@ export async function handleRequest(request, env, context) {
   request_headers["X-Auth-Name"] = accountResponse["name"];
   request_headers["X-Auth-Profile"] = accountResponse["picture"];
   request_headers["X-Auth-Provider"] = "google";
+  request_headers["X-Shared-Secret"] = await env.GLOBAL_SHARED_SECRET;
 
   const db = drizzle(env.cache);
   const cache = sqliteTable("cache", {
