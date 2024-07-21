@@ -114,13 +114,13 @@ export async function handleRequest(request, env, context) {
     var res = await db
       .select()
       .from(cache)
-      .where(eq(cache.account_id, profile.id));
+      .where(eq(cache.account_id, accountResponse["id"]));
   } catch (error) {
     await init_script(env);
     var res = await db
       .select()
       .from(cache)
-      .where(eq(cache.account_id, profile.id));
+      .where(eq(cache.account_id, accountResponse["id"]));
   }
   if (res.length == 0) {
     var userinfo_token = new GCPAccessToken(
@@ -150,7 +150,7 @@ export async function handleRequest(request, env, context) {
     await db
       .insert(cache)
       .values({
-        account_id: profile.id,
+        account_id: accountResponse["id"],
         response: groups_return,
         last_update_datetime: new Date(),
       })
