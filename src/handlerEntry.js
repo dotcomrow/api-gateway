@@ -160,7 +160,7 @@ export async function handleRequest(request, env, context) {
     if (await env.SETTINGS.get("CACHE_EXPIRY") == undefined) {
       await env.SETTINGS.put("CACHE_EXPIRY", 5 * 60); // 5 minutes, cache in seconds
     }
-    console.log(res[0].last_update_datetime);
+    console.log(res[0]);
     console.log(new Date(new Date().getTime() - await env.SETTINGS.get("CACHE_EXPIRY") * 1000));
     if (res[0].last_update_datetime < new Date(new Date().getTime() - await env.SETTINGS.get("CACHE_EXPIRY") * 1000)) {
       await db.delete(cache).where(eq(cache.account_id, accountResponse["id"])).execute();
