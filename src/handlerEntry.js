@@ -153,7 +153,7 @@ export async function handleRequest(request, env, context) {
       .values({
         account_id: accountResponse["id"],
         response: groups_return,
-        last_update_datetime: new Date(),
+        last_update_datetime: new Date().getTime(),
       })
       .execute();
   } else {
