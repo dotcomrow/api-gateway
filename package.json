@@ -20,7 +20,10 @@
         "url": "^0.11.0",
         "vm-browserify": "^1.1.2",
         "buffer": "^6.0.3",
-        "process": "^0.11.10"
+        "process": "^0.11.10",
+        "better-sqlite3": "^9.2.2",
+        "drizzle-kit": "^0.20.14",
+        "drizzle-orm": "^0.29.3",
     },
     "private": true,
     "type": "module",

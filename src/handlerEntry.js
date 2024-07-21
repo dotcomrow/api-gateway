@@ -92,35 +92,66 @@ export async function handleRequest(request, env, context) {
   for (var entry of request.headers.entries()) {
     request_headers[entry[0]] = entry[1];
   }
-  request_headers["X-Auth-User"]= accountResponse["id"];
-  request_headers["X-Auth-Email"]= accountResponse["email"];
-  request_headers["X-Auth-Name"]= accountResponse["name"];
-  request_headers["X-Auth-Profile"]= accountResponse["picture"];
-  request_headers["X-Auth-Provider"]= "google";
+  request_headers["X-Auth-User"] = accountResponse["id"];
+  request_headers["X-Auth-Email"] = accountResponse["email"];
+  request_headers["X-Auth-Name"] = accountResponse["name"];
+  request_headers["X-Auth-Profile"] = accountResponse["picture"];
+  request_headers["X-Auth-Provider"] = "google";
 
-  var userinfo_token = new GCPAccessToken(
-    env.GCP_USERINFO_CREDENTIALS
-  ).getAccessToken(
-    "https://www.googleapis.com/auth/admin.directory.group.readonly"
-  );
-  var userinfo_response = await GCPUserInfo.getUserInfo(
-    (
-      await userinfo_token
-    ).access_token,
-    accountResponse["id"],
-    env.DOMAIN
-  );
+  const db = drizzle(env.cache);
+  const cache = sqliteTable("cache", {
+    account_id: varchar("account_id").notNull().primaryKey(),
+    response: jsonb("response").notNull(),
+    last_update_datetime: timestamp("last_update_datetime").notNull(),
+  });
 
-  if (userinfo_response) {
-    // filter group data from response
-    var groups_return = [];
-    for (var obj of userinfo_response.groups) {
-      groups_return.push({
-        email: obj.email,
-        description: obj.description
-      });
+  try {
+    var res = await db
+      .select()
+      .from(cache)
+      .where(eq(cache.account_id, profile.id));
+  } catch (error) {
+    await init_script(env);
+    var res = await db
+      .select()
+      .from(cache)
+      .where(eq(cache.account_id, profile.id));
+  }
+  if (res.length == 0) {
+    var userinfo_token = new GCPAccessToken(
+      env.GCP_USERINFO_CREDENTIALS
+    ).getAccessToken(
+      "https://www.googleapis.com/auth/admin.directory.group.readonly"
+    );
+    var userinfo_response = await GCPUserInfo.getUserInfo(
+      (
+        await userinfo_token
+      ).access_token,
+      accountResponse["id"],
+      env.DOMAIN
+    );
+
+    if (userinfo_response) {
+      // filter group data from response
+      var groups_return = [];
+      for (var obj of userinfo_response.groups) {
+        groups_return.push({
+          email: obj.email,
+          description: obj.description,
+        });
+      }
+      request_headers["X-Auth-Groups"] = JSON.stringify(groups_return);
     }
-    request_headers["X-Auth-Groups"]= JSON.stringify(groups_return);
+    await db
+      .insert(cache)
+      .values({
+        account_id: profile.id,
+        response: groups_return,
+        last_update_datetime: new Date(),
+      })
+      .execute();
+  } else {
+    responseObject = res[0].response;
   }
 
   var req_url = new URL(request.url);
@@ -139,8 +170,10 @@ export async function handleRequest(request, env, context) {
   var response_headers = {};
   response_headers["Access-Control-Allow-Credentials"] = "true";
   response_headers["Access-Control-Allow-Origin"] = origin;
-  response_headers["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS, DELETE, PUT";
-  response_headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type";
+  response_headers["Access-Control-Allow-Methods"] =
+    "POST, GET, OPTIONS, DELETE, PUT";
+  response_headers["Access-Control-Allow-Headers"] =
+    "Authorization, Content-Type";
   response_headers["Content-Type"] = "application/json";
   response_headers["Connection"] = request.headers.get("Connection");
 
