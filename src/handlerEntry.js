@@ -1,5 +1,10 @@
 import { GCPAccessToken } from "npm-gcp-token";
 import { GCPUserInfo } from "npm-gcp-userinfo";
+import { sqliteTable } from "drizzle-orm/sqlite-core";
+import { jsonb, timestamp, varchar } from "drizzle-orm/pg-core";
+import { drizzle } from "drizzle-orm/d1";
+import { eq } from "drizzle-orm";
+import { init_script } from "./init_script.js";
 
 export async function handleRequest(request, env, context) {
   var origin = request.headers.get("Origin") || request.headers.get("origin");
