@@ -153,12 +153,12 @@ export async function handleRequest(request, env, context) {
       .values({
         account_id: accountResponse["id"],
         response: groups_return,
-        last_update_datetime: new Date().getTime(),
+        last_update_datetime: new Date(),
       })
       .execute();
   } else {
     if (await env.SETTINGS.get("CACHE_EXPIRY") == undefined) {
-      await env.SETTINGS.put("CACHE_EXPIRY", 5);
+      await env.SETTINGS.put("CACHE_EXPIRY", 5 * 60); // 5 minutes, cache in seconds
     }
     console.log(res[0].last_update_datetime);
     console.log(new Date(new Date().getTime() - await env.SETTINGS.get("CACHE_EXPIRY") * 1000));
