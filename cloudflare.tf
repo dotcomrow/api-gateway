@@ -24,7 +24,7 @@ resource "cloudflare_d1_database" "cache" {
 
 resource "cloudflare_workers_kv_namespace" "settings" {
   account_id = var.cloudflare_account_id
-  title      = "settings"
+  title      = "${var.project_name}-settings"
 }
 
 resource "cloudflare_worker_script" "project_script" {
