@@ -36,7 +36,7 @@ resource "cloudflare_worker_script" "project_script" {
 
   kv_namespace_binding {
     name         = "SETTINGS"
-    namespace_id = cloudflare_workers_kv_namespace.mapping.id
+    namespace_id = cloudflare_workers_kv_namespace.settings.id
   }
 
   plain_text_binding {
