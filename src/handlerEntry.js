@@ -161,7 +161,6 @@ export async function handleRequest(request, env, context) {
       await env.SETTINGS.put("CACHE_EXPIRY", 5 * 60); // 5 minutes, cache in seconds
     }
     if (res[0].last_update_datetime < new Date().getTime() - await env.SETTINGS.get("CACHE_EXPIRY") * 1000) {
-      console.log(accountResponse)
       await db.delete(cache).where(eq(cache.account_id, accountResponse["id"])).execute();
     }
     request_headers["X-Auth-Groups"] = JSON.stringify(res[0].response);
