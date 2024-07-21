@@ -17,6 +17,11 @@ resource "cloudflare_worker_route" "project_route" {
   script_name = cloudflare_worker_script.project_script.name
 }
 
+resource "cloudflare_d1_database" "cache" {
+  account_id = var.cloudflare_account_id
+  name       = "${var.project_name}_database"
+}
+
 resource "cloudflare_worker_script" "project_script" {
   account_id         = var.cloudflare_account_id
   name               = local.project_name
@@ -81,5 +86,10 @@ resource "cloudflare_worker_script" "project_script" {
   service_binding {
     name = "nodejs-cloudflare-results-service"
     service ="nodejs-cloudflare-results-service"
+  }
+
+  d1_database_binding {
+    name        = "cache"
+    database_id = cloudflare_d1_database.cache.id
   }
 }
