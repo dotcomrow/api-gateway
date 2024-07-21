@@ -9,7 +9,7 @@ export async function init_script(env) {
         `CREATE TABLE cache (
       account_id varchar(64) PRIMARY KEY,
       response jsonb,
-      last_update_datetime timestamp)`
+      last_update_datetime numeric)`
       )
       .run();
   } catch (e) {

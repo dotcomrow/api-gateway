@@ -1,7 +1,7 @@
 import { GCPAccessToken } from "npm-gcp-token";
 import { GCPUserInfo } from "npm-gcp-userinfo";
 import { sqliteTable } from "drizzle-orm/sqlite-core";
-import { jsonb, timestamp, varchar } from "drizzle-orm/pg-core";
+import { jsonb, numeric, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { init_script } from "./init_script.js";
@@ -108,7 +108,7 @@ export async function handleRequest(request, env, context) {
   const cache = sqliteTable("cache", {
     account_id: varchar("account_id").notNull().primaryKey(),
     response: jsonb("response").notNull(),
-    last_update_datetime: timestamp("last_update_datetime").notNull(),
+    last_update_datetime: numeric("last_update_datetime").notNull(),
   });
 
   try {
@@ -153,7 +153,7 @@ export async function handleRequest(request, env, context) {
       .values({
         account_id: accountResponse["id"],
         response: groups_return,
-        last_update_datetime: new Date(),
+        last_update_datetime: new Date().getTime(),
       })
       .execute();
   } else {
