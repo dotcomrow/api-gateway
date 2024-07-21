@@ -156,9 +156,7 @@ export async function handleRequest(request, env, context) {
       })
       .execute();
   } else {
-    console.log(res);
-    console.log(res[0].response);
-    request_headers["X-Auth-Groups"] = res[0].response;
+    request_headers["X-Auth-Groups"] = JSON.stringify(res[0].response);
   }
 
   var req_url = new URL(request.url);
