@@ -14,9 +14,7 @@ export async function handleRequest(request, env, context) {
     var originAllowed = false;
     for (var d in cors_domains) {
       var regex = new RegExp(cors_domains[d]);
-      console.log("regex", regex);
       if (regex.test(origin)) {
-        console.log(origin + " is allowed");
         originAllowed = true;
         break;
       }
