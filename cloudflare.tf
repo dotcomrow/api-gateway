@@ -37,7 +37,7 @@ resource "cloudflare_worker_script" "project_script" {
 
   plain_text_binding {
     name = "CORS_DOMAINS"
-    text = ".${var.project_name}.${var.domain},.*localhost.*"
+    text = ".${var.project_name}.${var.domain},.*localhost.*,${var.domain}.pages.dev"
   }
 
   plain_text_binding {

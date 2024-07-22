@@ -16,6 +16,7 @@ export async function handleRequest(request, env, context) {
       var regex = new RegExp(cors_domains[d]);
       if (regex.test(origin)) {
         originAllowed = true;
+        break;
       }
     }
     if (!originAllowed) {
