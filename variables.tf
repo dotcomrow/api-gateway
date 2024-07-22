@@ -63,3 +63,9 @@ variable GLOBAL_SHARED_SECRET {
   type = string
   nullable = false
 }
+
+variable ALLOWED_HOSTS {
+  description = "Allowed hosts"
+  type = string
+  nullable = false
+}
