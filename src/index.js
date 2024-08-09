@@ -20,7 +20,6 @@ export default {
         [
           {
             severity: "ERROR",
-            // textPayload: message,
             jsonPayload: {
               responseError,
             },
