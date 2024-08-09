@@ -108,7 +108,7 @@ jobs:
           --request POST \
           --data @payload.json \
           --output output.txt \
-          https://app.terraform.io/api/v2/organizations/${{ vars.TF_ORGANIZATION }}/workspaces
+          https://app.terraform.io/api/v2/organizations/${{ github.repository_owner }}/workspaces
           echo "workspace_id=$(cat output.txt | jq -r '.[].id')" >> $GITHUB_OUTPUT
 
       - name: Create workspace variables
