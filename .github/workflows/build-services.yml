@@ -10,7 +10,7 @@ permissions: write-all
 jobs:
   deploy:
     env:
-        TF_CLOUD_ORGANIZATION: ${{ vars.TF_ORGANIZATION }}
+        TF_CLOUD_ORGANIZATION: ${{ github.repository_owner }}
         TF_API_TOKEN: ${{ secrets.TFE_TOKEN }}
     name: "Build and Deploy"
     runs-on: ubuntu-latest
