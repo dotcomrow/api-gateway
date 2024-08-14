@@ -9,8 +9,8 @@ permissions: write-all
 jobs:
   deploy:
     env:
-        TF_CLOUD_ORGANIZATION: ${{ github.repository_owner }}
-        TF_API_TOKEN: ${{ secrets.TFE_TOKEN }}
+      TF_CLOUD_ORGANIZATION: ${{ github.repository_owner }}
+      TF_API_TOKEN: ${{ secrets.TFE_TOKEN }}
     name: "Build and Deploy"
     runs-on: ubuntu-latest
 
@@ -54,13 +54,24 @@ jobs:
           npm --prefix ./ install
           npm --prefix ./ run build
 
+      - name: Set variables
+        id: setvars
+        run: |
+          if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${{github.base_ref}}" == "prod" || "${{github.ref}}" == "refs/heads/prod" ]]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+          fi
+
       - name: Commit
         run: |
           cd release
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git add .
-          git commit -m "Release ${{ steps.version.outputs.version }}"
+          git commit -m "Release ${{ steps.version.outputs.version }}-${{ steps.setvars.outputs.environment }}"
           git push
 
       - name: Create release
@@ -90,14 +101,14 @@ jobs:
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload
         with:
-              workspace: ${{ github.event.repository.name }}
-              directory: release
+          workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
+          directory: release
 
       - name: Create Apply Run
         uses: hashicorp/tfc-workflows-github/actions/create-run@v1.1.1
         id: apply-run
         if: success() || failure()
         with:
-          workspace: ${{ github.event.repository.name }}
+          workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           plan_only: false
