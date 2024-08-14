@@ -21,7 +21,7 @@ export async function handleRequest(request, env, context) {
     }
     if (!originAllowed) {
       return new Response(
-        JSON.stringify({ message: "CORS not supported -> " + origin }),
+        JSON.stringify({ message: "CORS not configured -> " + origin }),
         {
           status: 403,
           headers: {
