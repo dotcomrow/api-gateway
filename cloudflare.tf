@@ -1,7 +1,7 @@
 resource "cloudflare_workers_domain" "project_domain" {
   account_id = var.cloudflare_account_id
   hostname   = "${var.project_name}.${var.environment}.${var.domain}"
-  service    = var.project_name
+  service    = "${var.project_name}-${var.environment}"
   zone_id    = var.cloudflare_zone_id
 
   depends_on = [cloudflare_workers_script.project_script]
