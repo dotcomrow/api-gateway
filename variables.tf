@@ -70,7 +70,7 @@ variable ALLOWED_HOSTS {
   nullable = false
 }
 
-variable ENVIRONMENT {
+variable environment {
   description = "Environment"
   type = string
   nullable = false
