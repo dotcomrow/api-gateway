@@ -2,8 +2,7 @@ name: Build and Deploy Services
 
 on:
   push:
-    branches:
-      - master
+    branches: ["prod", "dev"]
 
 permissions: write-all
 
@@ -87,62 +86,6 @@ jobs:
             } catch (error) {
               core.setFailed(error.message);
             }
-
-      - name: Create workspace
-        id: create_workspace
-        run: |
-          cat > payload.json <<EOF
-          {
-            "data": {
-              "attributes": {
-                "name": "${{ github.event.repository.name }}",
-                "auto-apply": "true"
-              },
-              "type": "workspaces"
-            }
-          }
-          EOF
-          curl \
-          --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
-          --header "Content-Type: application/vnd.api+json" \
-          --request POST \
-          --data @payload.json \
-          --output output.txt \
-          https://app.terraform.io/api/v2/organizations/${{ github.repository_owner }}/workspaces
-          echo "workspace_id=$(cat output.txt | jq -r '.[].id')" >> $GITHUB_OUTPUT
-
-      - name: Create workspace variables
-        run: |
-            cat > payload.json <<EOF
-            {
-              "data": {
-                "type":"vars",
-                "attributes": {
-                  "key":"project_name",
-                  "value":"${{ github.event.repository.name }}",
-                  "description":"project name",
-                  "category":"terraform",
-                  "hcl":false,
-                  "sensitive":false
-                },
-                "relationships": {
-                  "workspace": {
-                    "data": {
-                      "id":"${{ steps.create_workspace.outputs.workspace_id }}",
-                      "type":"workspaces"
-                    }
-                  }
-                }
-              }
-            }
-            EOF
-            curl \
-            --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
-            --header "Content-Type: application/vnd.api+json" \
-            --request POST \
-            --data @payload.json \
-            https://app.terraform.io/api/v2/vars
-
 
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload

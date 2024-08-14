@@ -69,3 +69,9 @@ variable ALLOWED_HOSTS {
   type = string
   nullable = false
 }
+
+variable ENVIRONMENT {
+  description = "Environment"
+  type = string
+  nullable = false
+}
