@@ -4,13 +4,13 @@ resource "cloudflare_workers_domain" "project_domain" {
   service    = var.project_name
   zone_id    = var.cloudflare_zone_id
 
-  depends_on = [cloudflare_worker_script.project_script]
+  depends_on = [cloudflare_workers_script.project_script]
 }
 
 resource "cloudflare_workers_route" "project_route" {
   zone_id     = var.cloudflare_zone_id
   pattern     = "${var.project_name}.${var.environment}.${var.domain}/*"
-  script_name = cloudflare_worker_script.project_script.name
+  script_name = cloudflare_workers_script.project_script.name
 }
 
 resource "cloudflare_d1_database" "cache" {
