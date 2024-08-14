@@ -1,4 +1,4 @@
-resource "cloudflare_worker_domain" "project_domain" {
+resource "cloudflare_workers_domain" "project_domain" {
   account_id = var.cloudflare_account_id
   hostname   = "${var.project_name}.${var.environment}.${var.domain}"
   service    = var.project_name
@@ -7,7 +7,7 @@ resource "cloudflare_worker_domain" "project_domain" {
   depends_on = [cloudflare_worker_script.project_script]
 }
 
-resource "cloudflare_worker_route" "project_route" {
+resource "cloudflare_workers_route" "project_route" {
   zone_id     = var.cloudflare_zone_id
   pattern     = "${var.project_name}.${var.environment}.${var.domain}/*"
   script_name = cloudflare_worker_script.project_script.name
@@ -23,7 +23,7 @@ resource "cloudflare_workers_kv_namespace" "settings" {
   title      = "${var.project_name}-${var.environment}-settings"
 }
 
-resource "cloudflare_worker_script" "project_script" {
+resource "cloudflare_workers_script" "project_script" {
   account_id         = var.cloudflare_account_id
   name               = "${var.project_name}-${var.environment}"
   content            = file("${path.module}/dist/index.mjs")
@@ -77,11 +77,6 @@ resource "cloudflare_worker_script" "project_script" {
   secret_text_binding {
     name = "GLOBAL_SHARED_SECRET"
     text = var.GLOBAL_SHARED_SECRET
-  }
-
-  service_binding {
-    name    = "nodejs-cloudflare-logging-service"
-    service = "nodejs-cloudflare-logging-service"
   }
 
   service_binding {
