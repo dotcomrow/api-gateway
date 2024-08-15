@@ -46,6 +46,11 @@ resource "cloudflare_workers_script" "project_script" {
   }
 
   plain_text_binding {
+    name = "ENVIRONMENT"
+    text = var.environment
+  }
+
+  plain_text_binding {
     name = "GCP_LOGGING_PROJECT_ID"
     text = var.GCP_LOGGING_PROJECT_ID
   }
@@ -77,16 +82,6 @@ resource "cloudflare_workers_script" "project_script" {
   secret_text_binding {
     name = "GLOBAL_SHARED_SECRET"
     text = var.GLOBAL_SHARED_SECRET
-  }
-
-  service_binding {
-    name    = "nodejs-cloudflare-service-template"
-    service = "nodejs-cloudflare-service-template"
-  }
-
-  service_binding {
-    name    = "nodejs-cloudflare-results-service"
-    service = "nodejs-cloudflare-results-service"
   }
 
   d1_database_binding {
