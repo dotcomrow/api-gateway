@@ -168,12 +168,9 @@ export async function handleRequest(request, env, context) {
   }
 
   var req_url = new URL(request.url);
-  if (!env[req_url.pathname.split("/")[1]]) {
-    throw new Error(req_url.pathname.split("/")[1] + " not bound service");
-  }
-
-  var response = await env[req_url.pathname.split("/")[1]].fetch(
-    new Request(request.url, {
+  
+  var response = await fetch(
+    new Request("https://" + req_url.pathname.split("/")[1] + env.ENVIRONMENT + "." + env.DOMAIN, {
       method: request.method,
       body: request.body,
       headers: request_headers,

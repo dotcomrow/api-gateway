@@ -46,6 +46,11 @@ resource "cloudflare_workers_script" "project_script" {
   }
 
   plain_text_binding {
+    name = "ENVIRONMENT"
+    text = var.environment
+  }
+
+  plain_text_binding {
     name = "GCP_LOGGING_PROJECT_ID"
     text = var.GCP_LOGGING_PROJECT_ID
   }
