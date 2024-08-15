@@ -245,7 +245,7 @@ jobs:
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload_prod
         with:
-            workspace: ${{ github.event.repository.name }}-dev
+            workspace: ${{ github.event.repository.name }}-prod
             directory: release
 
       - name: Create Apply Run dev
@@ -262,7 +262,7 @@ jobs:
         id: apply-run-prod
         if: success() || failure()
         with:
-            workspace: ${{ github.event.repository.name }}-dev
+            workspace: ${{ github.event.repository.name }}-prod
             configuration_version: ${{ steps.upload_prod.outputs.configuration_version_id }}
             plan_only: false
 
