@@ -79,16 +79,6 @@ resource "cloudflare_workers_script" "project_script" {
     text = var.GLOBAL_SHARED_SECRET
   }
 
-  service_binding {
-    name    = "nodejs-cloudflare-service-template"
-    service = "nodejs-cloudflare-service-template"
-  }
-
-  service_binding {
-    name    = "nodejs-cloudflare-results-service"
-    service = "nodejs-cloudflare-results-service"
-  }
-
   d1_database_binding {
     name        = "cache"
     database_id = cloudflare_d1_database.cache.id
