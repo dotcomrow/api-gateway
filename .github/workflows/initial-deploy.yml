@@ -153,7 +153,7 @@ jobs:
                 owner: context.repo.owner,
                 prerelease: false,
                 repo: context.repo.repo,
-                tag_name: process.env.VERSION,
+                tag_name: process.env.VERSION + '-initial',
                 target_commitish: 'prod'
               });
               core.exportVariable('RELEASE_ID', response.data.id);
