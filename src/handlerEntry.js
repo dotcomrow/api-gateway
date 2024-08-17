@@ -53,6 +53,7 @@ export async function handleRequest(request, env, context) {
   for (var entry of request.headers.entries()) {
     request_headers[entry[0]] = entry[1];
   }
+  request_headers["X-Shared-Secret"] = await env.GLOBAL_SHARED_SECRET;
 
   if (accountResponse != undefined) {
     request_headers["X-Auth-User"] = accountResponse["id"];
@@ -60,8 +61,7 @@ export async function handleRequest(request, env, context) {
     request_headers["X-Auth-Name"] = accountResponse["name"];
     request_headers["X-Auth-Profile"] = accountResponse["picture"];
     request_headers["X-Auth-Provider"] = "google";
-    request_headers["X-Shared-Secret"] = await env.GLOBAL_SHARED_SECRET;
-
+    
     const db = drizzle(env.cache);
     const cache = sqliteTable("cache", {
       account_id: varchar("account_id").notNull().primaryKey(),
