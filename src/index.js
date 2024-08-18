@@ -1,6 +1,6 @@
 import { handleRequest } from "./handlerEntry.js";
 import { serializeError } from "serialize-error";
-import { default as LogUtility } from "../../utils/LoggingUtility.js";
+import { default as LogUtility } from "./utils/LoggingUtility.js";
 
 export default {
   async fetch(request, env, context) {

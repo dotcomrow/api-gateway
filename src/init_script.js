@@ -1,5 +1,5 @@
 import { serializeError } from "serialize-error";
-import { default as LogUtility } from "../../utils/LoggingUtility.js";
+import { default as LogUtility } from "./utils/LoggingUtility.js";
 
 export async function init_script(env) {
   try {
