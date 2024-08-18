@@ -5,7 +5,7 @@ import { jsonb, numeric, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { init_script } from "./init_script.js";
-import { default as AuthenticationUtility } from "./utility/AuthenticationUtility.js";
+import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
 
 export async function handleRequest(request, env, context) {
   var origin = request.headers.get("Origin") || request.headers.get("origin");
