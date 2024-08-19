@@ -64,6 +64,11 @@ resource "cloudflare_workers_script" "project_script" {
     text = "${var.project_name}_${var.environment}_worker_log"
   }
 
+  plain_text_binding {
+    name = "VERSION"
+    text = var.VERSION
+  }
+
   secret_text_binding {
     name = "GCP_LOGGING_CREDENTIALS"
     text = var.GCP_LOGGING_CREDENTIALS

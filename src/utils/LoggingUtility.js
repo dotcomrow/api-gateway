@@ -10,6 +10,7 @@ export default {
       LOGGING_TOKEN: await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write"),
       LOG_NAME: env.LOG_NAME,
       SpanId: uuidv4(),
+      VERSION: env.VERSION,
     }
     return context;
   },
@@ -20,6 +21,7 @@ export default {
       entry.labels = {
         environment: context.ENVIRONMENT,
         spanId: context.SpanId,
+        version: context.VERSION,
       }
       finalEntries.push(entry);
     }

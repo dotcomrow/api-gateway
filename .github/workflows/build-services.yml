@@ -114,6 +114,50 @@ jobs:
               core.setFailed(error.message);
             }
 
+      - name: Fetch workspace id
+        id: fetch_workspace_id
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        run: |
+          workspace_id=$(curl \
+          --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
+          --header "Content-Type: application/vnd.api+json" \
+          --request GET \
+          https://app.terraform.io/api/v2/organizations/${{ github.repository_owner }}/workspaces/${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }} | jq -r '.data.id')
+          echo "workspace_id=$workspace_id" >> $GITHUB_OUTPUT
+
+      - name: update version
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        run: |
+          cat > payload.json <<EOF
+          {
+            "data": {
+              "type":"vars",
+              "attributes": {
+                "key":"VERSION",
+                "value":"${{ steps.version.outputs.version }}",
+                "description":"code version",
+                "category":"terraform",
+                "hcl":false,
+                "sensitive":false
+              },
+              "relationships": {
+                "workspace": {
+                  "data": {
+                    "id":"${{ steps.fetch_workspace_id.outputs.workspace_id }}",
+                    "type":"workspaces"
+                  }
+                }
+              }
+            }
+          }
+          EOF
+          curl \
+          --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
+          --header "Content-Type: application/vnd.api+json" \
+          --request POST \
+          --data @payload.json \
+          https://app.terraform.io/api/v2/vars
+
       - uses: hashicorp/tfc-workflows-github/actions/upload-configuration@v1.1.1
         id: upload
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
