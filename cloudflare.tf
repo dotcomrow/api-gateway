@@ -61,7 +61,7 @@ resource "cloudflare_workers_script" "project_script" {
   }
   plain_text_binding {
     name = "LOG_NAME"
-    text = "${var.project_name}_worker_log"
+    text = "${var.project_name}_${var.environment}_worker_log"
   }
 
   secret_text_binding {
