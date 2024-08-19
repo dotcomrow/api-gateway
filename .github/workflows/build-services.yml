@@ -116,6 +116,18 @@ jobs:
       - name: update version
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         run: |
+          curl \
+            --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
+            --header "Content-Type: application/vnd.api+json" \
+            "https://app.terraform.io/api/v2/workspaces/${{ steps.fetch_workspace_id.outputs.workspace_id }}/vars" | jq -r '.data[] | select(.attributes.key == "VERSION") | .id' > var_id
+
+          VAR_ID=$(cat var_id)
+          curl \
+            --header "Authorization: Bearer $TOKEN" \
+            --header "Content-Type: application/vnd.api+json" \
+            --request DELETE \
+            https://app.terraform.io/api/v2/workspaces/${{ steps.fetch_workspace_id.outputs.workspace_id }}/vars/$VAR_ID
+
           cat > payload.json <<EOF
           {
             "data": {
