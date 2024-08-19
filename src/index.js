@@ -5,11 +5,12 @@ import { default as LogUtility } from "./utils/LoggingUtility.js";
 export default {
   async fetch(request, env, context) {
     self.location = new URL("https://www.google.com");
+    var loggingContext = LogUtility.buildLogContext(env);
     try {
-      return await handleRequest(request, env, context);
+      return await handleRequest(request, env, context, loggingContext);
     } catch (e) {
       const responseError = serializeError(e);
-      await LogUtility.logEntry(LogUtility.buildLogContext(env), [
+      await LogUtility.logEntry(loggingContext, [
         {
           severity: "ERROR",
           jsonPayload: {
