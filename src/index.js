@@ -5,7 +5,7 @@ import { default as LogUtility } from "./utils/LoggingUtility.js";
 export default {
   async fetch(request, env, context) {
     self.location = new URL("https://www.google.com");
-    var loggingContext = LogUtility.buildLogContext(env);
+    var loggingContext = await LogUtility.buildLogContext(env);
     try {
       return await handleRequest(request, env, context, loggingContext);
     } catch (e) {
