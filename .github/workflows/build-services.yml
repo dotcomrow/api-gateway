@@ -22,34 +22,34 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
 
+      - name: Set variables
+        id: setvars
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
+        run: |
+          if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
+            echo "environment=dev" >> $GITHUB_OUTPUT
+          fi
+
+          if [[ "${{github.base_ref}}" == "prod" || "${{github.ref}}" == "refs/heads/prod" ]]; then
+            echo "environment=prod" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         uses: actions/checkout@v3
-
-      - name: Create release branch if it doesn't exist
-        continue-on-error: true
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config pull.rebase true
-          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
-          if [ $resp -gt 0 ]; then
-            git push origin --delete release
-          fi
 
       - name: Create Release branch
         uses: JamesIves/github-pages-deploy-action@v4
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         with:
-          branch: release # The branch the action should deploy to.
+          branch: release-${{ steps.setvars.outputs.environment }} # The branch the action should deploy to.
           folder: . # The folder the action should deploy.
 
       - name: Checkout Release branch
         uses: actions/checkout@v3
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         with:
-          ref: release
+          ref: release-${{ steps.setvars.outputs.environment }}
           path: release
 
       - name: Get next version
@@ -66,18 +66,6 @@ jobs:
           cd release
           npm --prefix ./ install
           npm --prefix ./ run build
-
-      - name: Set variables
-        id: setvars
-        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
-        run: |
-          if [[ "${{github.base_ref}}" == "dev" || "${{github.ref}}" == "refs/heads/dev" ]]; then
-            echo "environment=dev" >> $GITHUB_OUTPUT
-          fi
-
-          if [[ "${{github.base_ref}}" == "prod" || "${{github.ref}}" == "refs/heads/prod" ]]; then
-            echo "environment=prod" >> $GITHUB_OUTPUT
-          fi
 
       - name: Commit
         if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
@@ -106,7 +94,7 @@ jobs:
                 prerelease: false,
                 repo: context.repo.repo,
                 tag_name: process.env.VERSION,
-                target_commitish: 'release'
+                target_commitish: 'release-${{ steps.setvars.outputs.environment }}'
               });
               core.exportVariable('RELEASE_ID', response.data.id);
               core.exportVariable('RELEASE_UPLOAD_URL', response.data.upload_url);
@@ -175,12 +163,13 @@ jobs:
           plan_only: false
 
       - name: Delete release branch
+        if: ${{ steps.check_state.outputs.initial_deploy_state == 'disabled_manually' }}
         continue-on-error: true
         run: |
           git config --global user.name "${{ github.actor }}"
           git config --global user.email "${{ github.actor }}@users.noreply.github.com"
           git config pull.rebase true
-          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
+          resp=`git ls-remote --heads origin release-${{ steps.setvars.outputs.environment }} | wc -m | sed 's/ //g'`
           if [ $resp -gt 0 ]; then
-            git push origin --delete release
+            git push origin --delete release-${{ steps.setvars.outputs.environment }}
           fi
