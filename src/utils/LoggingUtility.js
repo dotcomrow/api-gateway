@@ -1,5 +1,6 @@
 import { GCPLogger } from "npm-gcp-logging";
 import { v4 as uuidv4 } from "uuid";
+import { GCPAccessToken } from "npm-gcp-token";
 
 export default {
   async buildLogContext(env) {
