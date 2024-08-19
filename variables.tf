@@ -75,3 +75,9 @@ variable environment {
   type = string
   nullable = false
 }
+
+variable VERSION {
+  description = "Version"
+  type = string
+  nullable = false
+}
