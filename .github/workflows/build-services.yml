@@ -129,3 +129,14 @@ jobs:
           workspace: ${{ github.event.repository.name }}-${{ steps.setvars.outputs.environment }}
           configuration_version: ${{ steps.upload.outputs.configuration_version_id }}
           plan_only: false
+
+      - name: Delete release branch
+        continue-on-error: true
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git config pull.rebase true
+          resp=`git ls-remote --heads origin release | wc -m | sed 's/ //g'`
+          if [ $resp -gt 0 ]; then
+            git push origin --delete release
+          fi
