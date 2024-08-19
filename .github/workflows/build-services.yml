@@ -123,7 +123,7 @@ jobs:
 
           VAR_ID=$(cat var_id)
           curl \
-            --header "Authorization: Bearer $TOKEN" \
+            --header "Authorization: Bearer ${{ secrets.TFE_TOKEN }}" \
             --header "Content-Type: application/vnd.api+json" \
             --request DELETE \
             https://app.terraform.io/api/v2/workspaces/${{ steps.fetch_workspace_id.outputs.workspace_id }}/vars/$VAR_ID
