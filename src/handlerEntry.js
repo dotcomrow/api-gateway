@@ -159,6 +159,7 @@ export async function handleRequest(request, env, context, loggingContext) {
     "Authorization, Content-Type";
   response_headers["Content-Type"] = "application/json";
   response_headers["Connection"] = request.headers.get("Connection");
+  response_headers["SpanId"] = loggingContext.SpanId;
 
   return new Response(response.body, {
     status: response.status,
