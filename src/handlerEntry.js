@@ -5,9 +5,9 @@ import { jsonb, numeric, varchar } from "drizzle-orm/pg-core";
 import { drizzle } from "drizzle-orm/d1";
 import { eq } from "drizzle-orm";
 import { init_script } from "./init_script.js";
-import { default as AuthenticationUtility } from "./utility/AuthenticationUtility.js";
+import { default as AuthenticationUtility } from "./utils/AuthenticationUtility.js";
 
-export async function handleRequest(request, env, context) {
+export async function handleRequest(request, env, context, loggingContext) {
   var origin = request.headers.get("Origin") || request.headers.get("origin");
 
   if (request.method === "OPTIONS") {
@@ -54,6 +54,7 @@ export async function handleRequest(request, env, context) {
     request_headers[entry[0]] = entry[1];
   }
   request_headers["X-Shared-Secret"] = await env.GLOBAL_SHARED_SECRET;
+  request_headers["SpanId"] = loggingContext.SpanId;
 
   if (accountResponse != undefined) {
     request_headers["X-Auth-User"] = accountResponse["id"];
@@ -158,6 +159,7 @@ export async function handleRequest(request, env, context) {
     "Authorization, Content-Type";
   response_headers["Content-Type"] = "application/json";
   response_headers["Connection"] = request.headers.get("Connection");
+  response_headers["SpanId"] = loggingContext.SpanId;
 
   return new Response(response.body, {
     status: response.status,

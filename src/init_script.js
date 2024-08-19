@@ -1,6 +1,5 @@
-import { GCPLogger } from "npm-gcp-logging";
-import { GCPAccessToken } from "npm-gcp-token";
 import { serializeError } from "serialize-error";
+import { default as LogUtility } from "./utils/LoggingUtility.js";
 
 export async function init_script(env) {
   try {
@@ -13,23 +12,14 @@ export async function init_script(env) {
       )
       .run();
   } catch (e) {
-    var logging_token = await new GCPAccessToken(
-      env.GCP_LOGGING_CREDENTIALS
-    ).getAccessToken("https://www.googleapis.com/auth/logging.write");
-    const responseError = serializeError(e);
-    await GCPLogger.logEntry(
-      env.GCP_LOGGING_PROJECT_ID,
-      logging_token.access_token,
-      env.LOG_NAME,
-      [
-        {
-          severity: "ERROR",
-          // textPayload: message,
-          jsonPayload: {
-            responseError,
-          },
+    await LogUtility.logEntry(LogUtility.buildLogContext(env), [
+      {
+        severity: "ERROR",
+        jsonPayload: {
+          message: "Exception occurred in fetch",
+          error: serializeError(err),
         },
-      ]
-    );
+      },
+    ]);
   }
 }
