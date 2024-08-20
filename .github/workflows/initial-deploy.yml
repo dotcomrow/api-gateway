@@ -257,7 +257,7 @@ jobs:
               "relationships": {
                 "workspace": {
                   "data": {
-                    "id":"${{ steps.create_workspace_dev.outputs.workspace_id }}",
+                    "id":"${{ steps.create_workspace_prod.outputs.workspace_id }}",
                     "type":"workspaces"
                   }
                 }
