@@ -17,7 +17,7 @@ export async function init_script(env) {
         severity: "ERROR",
         jsonPayload: {
           message: "Exception occurred in fetch",
-          error: serializeError(err),
+          error: serializeError(e),
         },
       },
     ]);
