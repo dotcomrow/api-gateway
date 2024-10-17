@@ -7,7 +7,7 @@ export default {
     var context = {
       ENVIRONMENT: env.ENVIRONMENT,
       GCP_LOGGING_PROJECT_ID: env.GCP_LOGGING_PROJECT_ID,
-      LOGGING_TOKEN: await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write"),
+      LOGGING_TOKEN: (await new GCPAccessToken(env.GCP_LOGGING_CREDENTIALS).getAccessToken("https://www.googleapis.com/auth/logging.write")).access_token,
       LOG_NAME: env.LOG_NAME,
       SpanId: uuidv4(),
       VERSION: env.VERSION,
