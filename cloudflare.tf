@@ -86,6 +86,6 @@ resource "cloudflare_workers_script" "project_script" {
 
   d1_database_binding {
     name        = "${var.project_name}_${var.environment}_cache"
-    database_id = "data.local_file.load_${var.project_name}_${var.environment}_cache_id.content"
+    database_id = "${data.local_file.load_api_gateway_cache_id.content}"
   }
 }
