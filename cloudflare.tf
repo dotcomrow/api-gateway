@@ -1,4 +1,4 @@
-resource "cloudflare_workers_domain" "worker_project_domain" {
+resource "cloudflare_workers_domain" "project_domain" {
   account_id = var.cloudflare_account_id
   hostname   = "${var.project_name}.${var.environment}.${var.domain}"
   service    = "${var.project_name}-${var.environment}"
@@ -7,7 +7,7 @@ resource "cloudflare_workers_domain" "worker_project_domain" {
   depends_on = [cloudflare_workers_script.project_script]
 }
 
-resource "cloudflare_workers_route" "worker_project_route" {
+resource "cloudflare_workers_route" "project_route" {
   zone_id     = var.cloudflare_zone_id
   pattern     = "${var.project_name}.${var.environment}.${var.domain}/*"
   script_name = cloudflare_workers_script.project_script.name
