@@ -1,0 +1,1 @@
+curl --location "https://api.cloudflare.com/client/v4/accounts/$cloudflare_account_id/d1/database" --header "Authorization: Bearer $cloudflare_token" | jq -c ".result[] | select(.name | contains(\"$d1_name\")) | .uuid" | tr -d '"' | tr -d '\n' > $d1_name
