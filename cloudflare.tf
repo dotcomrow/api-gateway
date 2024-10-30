@@ -1,4 +1,4 @@
-resource "cloudflare_workers_domain" "worker_project_domain" {
+resource "cloudflare_workers_domain" "project_domain" {
   account_id = var.cloudflare_account_id
   hostname   = "${var.project_name}.${var.environment}.${var.domain}"
   service    = "${var.project_name}-${var.environment}"
