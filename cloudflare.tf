@@ -13,11 +13,6 @@ resource "cloudflare_workers_route" "project_route" {
   script_name = cloudflare_workers_script.project_script.name
 }
 
-resource "cloudflare_d1_database" "cache" {
-  account_id = var.cloudflare_account_id
-  name       = "${var.project_name}_${var.environment}_cache"
-}
-
 resource "cloudflare_workers_kv_namespace" "settings" {
   account_id = var.cloudflare_account_id
   title      = "${var.project_name}-${var.environment}-settings"
@@ -90,7 +85,7 @@ resource "cloudflare_workers_script" "project_script" {
   }
 
   d1_database_binding {
-    name        = "cache"
-    database_id = cloudflare_d1_database.cache.id
+    name        = "${var.project_name}_${var.environment}_cache"
+    database_id = data.local_file.load_${var.project_name}_${var.environment}_cache_id.content
   }
 }
