@@ -16,5 +16,5 @@ resource "null_resource" "d1_api_gateway_cache_id" {
 
 data "local_file" "load_api_gateway_cache_id" {
   filename   = "${path.module}/api-gateway_${var.environment}_cache"
-  depends_on = [null_resource.d1_api_gateway_prod_cache_id]
+  depends_on = [null_resource.d1_api_gateway_cache_id]
 }
